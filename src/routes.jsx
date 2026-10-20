@@ -2,7 +2,7 @@ import { lazy, Suspense } from 'react'
 import { createBrowserRouter } from 'react-router-dom'
 
 import LoadingSkeleton from './components/common/LoadingSkeleton.jsx'
-import ProtectedRoute from './components/common/ProtectedRoute.jsx'
+import ProtectedRoute from './components/layout/ProtectedRoute.jsx'
 import AppLayout from './components/layout/AppLayout.jsx'
 
 const Dashboard = lazy(() => import('./pages/Dashboard.jsx'))
@@ -16,6 +16,7 @@ const Support = lazy(() => import('./pages/Support.jsx'))
 const Account = lazy(() => import('./pages/Account.jsx'))
 const Login = lazy(() => import('./pages/Login.jsx'))
 const NotFound = lazy(() => import('./pages/NotFound.jsx'))
+const DevComponents = lazy(() => import('./pages/DevComponents.jsx'))
 
 const fallback = <LoadingSkeleton className="mt-4" />
 
@@ -48,6 +49,8 @@ const routes = [
           { path: 'notifications', element: <Notifications /> },
           { path: 'support', element: <Support /> },
           { path: 'account', element: <Account /> },
+          // Temporary component gallery; removed before release.
+          { path: 'dev/components', element: <DevComponents /> },
           { path: '*', element: <NotFound /> },
         ],
       },
