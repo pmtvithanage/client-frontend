@@ -22,6 +22,9 @@ export default function SecurityStatusCard() {
   const overview = useOverview()
   const score = overview.data?.security_score
 
+  if (!score && !overview.isLoading && !overview.isError) return null
+  if (!score) return null
+
   return (
     <WidgetCard
       title="Security status"
@@ -36,14 +39,14 @@ export default function SecurityStatusCard() {
       action={<InfoTip label="How is this calculated?" text={formulaText()} />}
     >
       <div className="flex flex-col items-center gap-5 sm:flex-row">
-        <SecurityGauge score={score.score} label={score.label} />
+        <SecurityGauge score={score?.score} label={score?.label} />
         <div className="max-w-md text-center sm:text-left">
           <p className="text-sm leading-relaxed text-muted">
-            Your score is {score.score} out of {SCORE_CEILING}. It drops while alerts are still open —
+            Your score is {score?.score} out of {SCORE_CEILING}. It drops while alerts are still open —
             every open alert pulls it down, and urgent ones pull hardest.
           </p>
           <p className="mt-3 text-sm text-text">
-            {score.open_alerts} alert{score.open_alerts === 1 ? ' is' : 's are'} still open.
+            {score?.open_alerts} alert{score?.open_alerts === 1 ? ' is' : 's are'} still open.
           </p>
         </div>
       </div>

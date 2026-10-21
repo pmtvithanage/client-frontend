@@ -153,7 +153,9 @@ const DygraphChart = forwardRef(function DygraphChart(
   }, [data, replace])
 
   useEffect(() => {
-    graphRef.current?.setAnnotations(annotations)
+    if (graphRef.current?.setAnnotations) {
+      graphRef.current.setAnnotations(annotations)
+    }
   }, [annotations])
 
   const resetZoom = useCallback(() => {

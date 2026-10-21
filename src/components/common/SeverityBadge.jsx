@@ -25,6 +25,7 @@ export default function SeverityBadge({ tier, showTier = true, className = '' })
 
   return (
     <span
+      role="status"
       className={`inline-flex items-center gap-1.5 rounded-full border px-2 py-0.5 text-xs font-medium ${style.cls} ${className}`}
       title={showTier ? `${severityName(tier)} (${tier})` : severityName(tier)}
     >
