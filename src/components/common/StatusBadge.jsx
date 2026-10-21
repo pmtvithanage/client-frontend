@@ -23,10 +23,10 @@ export default function StatusBadge({ status, className = '' }) {
 
   return (
     <span
-      className={`inline-flex items-center gap-1.5 rounded-full border px-2 py-0.5 text-xs font-medium ${style.cls} ${className}`}
+      className={`inline-flex max-w-full items-center gap-1.5 rounded-full border px-2 py-0.5 text-xs font-medium ${style.cls} ${className}`}
     >
       <Icon className="h-3.5 w-3.5 shrink-0" aria-hidden="true" />
-      {ALERT_STATUS_LABEL[status] ?? status}
+      <span className="truncate">{ALERT_STATUS_LABEL[status] ?? status}</span>
     </span>
   )
 }

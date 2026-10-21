@@ -1,16 +1,14 @@
 import { Pause, Play, Sparkles } from 'lucide-react'
 
 /**
- * Calm live-feed controls above the alerts list: a floating "N new alerts,
- * click to show" pill (overlaying the list top so rows never shift) and a
- * Pause live / Resume live toggle. Arrivals only appear in the list after the
- * pill is clicked.
- * @param {{pendingCount: number, paused: boolean, onShow: () => void,
- *   onTogglePause: () => void}} props
+ * Live-feed controls above the alerts list: new alerts pill and pause/resume
+ * placed in the top-right area.
+ * @param {{pendingCount: number, paused: boolean, onShow: () => void, onTogglePause: () => void}} props
  */
 export default function NewAlertsBanner({ pendingCount, paused, onShow, onTogglePause }) {
   return (
-    <div className="pointer-events-none absolute inset-x-0 top-3 z-10 flex justify-center">
+    <div className="pointer-events-none absolute inset-x-0 top-2 z-10 flex items-start justify-between px-3">
+      <div className="pointer-events-auto" />
       <div className="pointer-events-auto flex items-center gap-2">
         {pendingCount > 0 ? (
           <button

@@ -59,7 +59,7 @@ export default function AlertsList({ alerts, focusIndex, onFocusRow }) {
       </ul>
 
       {/* Desktop: table */}
-      <table className="hidden w-full border-collapse text-sm md:table">
+      <table className="hidden w-full table-fixed border-collapse text-sm md:table">
         <thead>
           <tr className="border-b border-border text-left text-xs font-medium text-muted">
             <th scope="col" className="px-4 py-2.5 font-medium">When</th>
@@ -104,7 +104,7 @@ export default function AlertsList({ alerts, focusIndex, onFocusRow }) {
                   </Link>
                 </td>
                 <td className="whitespace-nowrap px-4 py-2.5 align-top font-mono text-xs text-muted">{meta.flow}</td>
-                <td className="whitespace-nowrap px-4 py-2.5 align-top">
+                <td className="px-8 py-2.5 align-top">
                   <StatusBadge status={alert.status} />
                 </td>
               </tr>
