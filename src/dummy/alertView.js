@@ -28,6 +28,10 @@ export function toClientAlert(alert, { detail = false } = {}) {
     direction: alert.direction,
     category: alert.category,
     signature: alert.signature,
+    duration_ms: alert.duration_ms ?? null,
+    bytes: alert.bytes ?? null,
+    dst_country: alert.dst_country ?? null,
+    dst_org: alert.dst_org ?? null,
   }
   if (detail) view.notes = alert.notes ?? []
   return view

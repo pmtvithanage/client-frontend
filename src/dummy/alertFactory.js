@@ -23,7 +23,7 @@ import {
   CATEGORIES,
   COMMON_PORTS,
 } from '../constants/categories.js'
-import { EXTERNAL_PREFIXES } from '../constants/network.js'
+import { DESTINATION_GEO, EXTERNAL_PREFIXES } from '../constants/network.js'
 import { SEVERITY_ORDER } from '../constants/severity.js'
 import { ALERT_STATUS } from '../constants/statuses.js'
 import { makeId, rngInt, seededRandom } from './helpers.js'
@@ -47,6 +47,18 @@ function directionPick(rng) {
   if (roll < DIRECTION_WEIGHTS.outbound) return 'outbound'
   if (roll < DIRECTION_WEIGHTS.outbound + DIRECTION_WEIGHTS.inbound) return 'inbound'
   return 'internal'
+}
+
+/** Country/organisation for an address, or null when the prefix is unknown. */
+function geoFor(ip) {
+  return DESTINATION_GEO[String(ip).split('.').slice(0, 3).join('.')] ?? null
+}
+
+/** Traffic facts for one alert: how long the flow lasted and how much moved. */
+function trafficFacts(rng) {
+  const duration_ms = rngInt(rng, 1, 600) * 1000
+  const bytes = 2_000 + Math.floor(rng() * 50_000_000)
+  return { duration_ms, bytes }
 }
 
 /** Status chosen from the age-based mix in `constants/alerts.js`. */
@@ -93,6 +105,7 @@ function buildAlert(rng, context) {
   const ageDays = (now - Date.parse(ts)) / 86_400_000
   const finalStatus = status ?? statusForAge(rng, ageDays)
   const author = seed.users[rngInt(rng, 0, seed.users.length - 1)]
+  const geo = geoFor(src_ip) ?? geoFor(dst_ip)
   const notes =
     finalStatus !== ALERT_STATUS.NEW && rng() < NOTE_CHANCE
       ? [
@@ -121,6 +134,9 @@ function buildAlert(rng, context) {
     direction,
     category,
     signature,
+    ...trafficFacts(rng),
+    dst_country: geo?.country ?? null,
+    dst_org: geo?.org ?? null,
     likely_benign: likelyBenign(rng, category, severity),
     notes,
   }
@@ -130,6 +146,7 @@ function buildAlert(rng, context) {
 function buildSampleAlert(seed, seq, now) {
   const sample = ACME_SAMPLE_FLOW
   const ts = new Date(now - sample.hours_ago * 3_600_000).toISOString()
+  const geo = geoFor(sample.dst_ip)
   return {
     id: `${seed.alertPrefix}-ALT-${String(seq).padStart(6, '0')}`,
     client_id: seed.id,
@@ -144,6 +161,10 @@ function buildSampleAlert(seed, seq, now) {
     direction: sample.direction,
     category: sample.category,
     signature: sample.signature,
+    duration_ms: 42_000,
+    bytes: 18_400_000,
+    dst_country: geo?.country ?? null,
+    dst_org: geo?.org ?? null,
     likely_benign: false,
     notes: [],
   }

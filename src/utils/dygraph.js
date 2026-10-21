@@ -5,7 +5,13 @@
  * @module utils/dygraph
  */
 
-import { DYGRAPH_FALLBACK_COLOR, DYGRAPH_THEME_VARS } from '../constants/charts.js'
+import {
+  DYGRAPH_ANIMATED_ZOOMS,
+  DYGRAPH_AXIS_LABEL_FONT_SIZE,
+  DYGRAPH_FALLBACK_COLOR,
+  DYGRAPH_STROKE_WIDTH,
+  DYGRAPH_THEME_VARS,
+} from '../constants/charts.js'
 
 /**
  * Read a CSS custom property from the document root.
@@ -85,4 +91,31 @@ export function summarizeRow(seriesNames, values, formatValue = formatChartValue
   return seriesNames
     .map((name, index) => `${name}: ${formatValue(values?.[index], name)}`)
     .join(', ')
+}
+
+/**
+ * Build the full dygraphs options object: theme palette, caller overrides and
+ * the wrapper's interaction callbacks (callbacks always win over `options`).
+ * @param {{labels: string[],
+ *   palette: {label: string, grid: string, axis: string, background: string, series: string[]},
+ *   options?: object,
+ *   handlers: {highlight: Function, unhighlight: Function, zoom: Function}}} params
+ * @returns {object} Options for `new Dygraph(container, file, options)`.
+ */
+export function buildChartOptions({ labels, palette, options = {}, handlers }) {
+  return {
+    labels,
+    strokeWidth: DYGRAPH_STROKE_WIDTH,
+    animatedZooms: DYGRAPH_ANIMATED_ZOOMS,
+    axisLabelFontSize: DYGRAPH_AXIS_LABEL_FONT_SIZE,
+    axisLabelColor: palette.label,
+    gridLineColor: palette.grid,
+    axisLineColor: palette.axis,
+    backgroundColor: palette.background,
+    ...(palette.series.length ? { colors: palette.series } : {}),
+    ...options,
+    highlightCallback: handlers.highlight,
+    unhighlightCallback: handlers.unhighlight,
+    zoomCallback: handlers.zoom,
+  }
 }

@@ -4,7 +4,7 @@
  * @module dummy/alerts.dummy
  */
 
-import { DEFAULT_LIMIT, MAX_LIMIT } from '../constants/alerts.js'
+import { DEFAULT_LIMIT, MAX_LIMIT, NOTE_MAX_LENGTH } from '../constants/alerts.js'
 import {
   ALERT_STATUS,
   ALLOWED_STATUS_TRANSITIONS,
@@ -14,9 +14,6 @@ import { toClientAlert } from './alertView.js'
 import { currentUser, delay, makeId, paginate } from './helpers.js'
 import { sortItems, toArray } from './query.js'
 import { findTenantAlert, getTenant } from './store.js'
-
-/** Longest note a client user may save. */
-export const NOTE_MAX_LENGTH = 500
 
 /** Fields searched by the `q` parameter. */
 function matchesQuery(alert, query) {
@@ -102,8 +99,14 @@ export async function getAlert(id) {
  * Allowed transitions are `new -> acknowledged | expected | resolved`
  * (`constants/statuses.js`); anything else is rejected with 409. Members may
  * only acknowledge (AGENTS.md §5).
+ *
+ * Marking an alert `expected` may carry an optional `reason`. The reason is
+ * recorded as feedback for the SOC team on the store alert
+ * (`expected_feedback`) — it is never returned by the client projection and
+ * never hides the alert.
  * @param {string} id Alert id.
- * @param {{status: string}} patch New status.
+ * @param {{status: string, reason?: string}} patch New status, plus an optional
+ *   reason when the status is `expected`.
  * @returns {Promise<object>} The updated alert (detail shape).
  * @throws {{status: number, message: string}} 400 bad status, 403 member
  *   restriction, 404 missing alert, 409 transition not allowed.
@@ -126,6 +129,13 @@ export async function updateAlert(id, patch = {}) {
   }
   alert.status = status
   alert.updated_at = new Date().toISOString()
+  if (status === ALERT_STATUS.EXPECTED && patch.reason) {
+    alert.expected_feedback = {
+      author: currentUser().email,
+      reason: String(patch.reason).trim(),
+      sent_at: alert.updated_at,
+    }
+  }
   return toClientAlert(alert, { detail: true })
 }
 

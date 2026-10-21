@@ -1,6 +1,6 @@
 import { useQuery } from '@tanstack/react-query'
 
-import { getDestinations, getDevices, getPorts } from '../api/network.js'
+import { getDestinations, getDevices, getPorts, getProtocols } from '../api/network.js'
 import { queryKeys } from './queryKeys.js'
 
 const STALE_MS = 60_000
@@ -39,6 +39,18 @@ export function useDevices() {
   return useQuery({
     queryKey: queryKeys.devices(),
     queryFn: getDevices,
+    staleTime: STALE_MS,
+  })
+}
+
+/**
+ * Share of this client's alerts by protocol.
+ * @returns {import('@tanstack/react-query').UseQueryResult<{data: object[], meta: object}>}
+ */
+export function useProtocols() {
+  return useQuery({
+    queryKey: queryKeys.protocols(),
+    queryFn: getProtocols,
     staleTime: STALE_MS,
   })
 }

@@ -30,13 +30,16 @@ export async function getAlert(id) {
  * Change an alert's status (`new -> acknowledged | expected | resolved`).
  * @param {string} id Alert id.
  * @param {string} status New status.
+ * @param {{reason?: string}} [options] `reason` is an optional note sent with
+ *   `expected` — it becomes feedback for the SOC team and never hides the alert.
  * @returns {Promise<object>} The updated alert.
  * @throws {{status: number, message: string}} 400/403/404/409 as documented in the contract.
  */
-export async function updateAlertStatus(id, status) {
-  // const { data } = await http.patch(`/alerts/${encodeURIComponent(id)}/status`, { status });
+export async function updateAlertStatus(id, status, options = {}) {
+  // const { data } = await http.patch(`/alerts/${encodeURIComponent(id)}/status`,
+  //   options.reason ? { status, reason: options.reason } : { status });
   // return data;
-  return dummy.updateAlert(id, { status })
+  return dummy.updateAlert(id, { status, reason: options.reason })
 }
 
 /**

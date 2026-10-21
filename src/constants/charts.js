@@ -34,3 +34,12 @@ export const DYGRAPH_SERIES_VARS = Object.freeze([
 
 /** Fallback color when a CSS variable cannot be resolved. */
 export const DYGRAPH_FALLBACK_COLOR = '#888888'
+
+/** Line width of the plotted series (px). */
+export const DYGRAPH_STROKE_WIDTH = 1.5
+
+/** Axis tick label size (px). */
+export const DYGRAPH_AXIS_LABEL_FONT_SIZE = 11
+
+/** Zooming/panning redraws instantly (no animation on live charts). */
+export const DYGRAPH_ANIMATED_ZOOMS = false

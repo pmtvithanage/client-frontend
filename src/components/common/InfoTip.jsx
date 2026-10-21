@@ -4,10 +4,12 @@ import { CircleHelp } from 'lucide-react'
 /**
  * A small `?` control that opens a plain-English explanation popover.
  * Opens on click (keyboard-reachable), closes on Escape or an outside click.
- * @param {{text?: string, children?: React.ReactNode, className?: string}} props
- *   `children` wins over `text` when both are given.
+ * @param {{text?: string, label?: string, children?: React.ReactNode,
+ *   className?: string}} props `children` wins over `text` when both are given;
+ *   `label` shows a visible button caption and replaces the default
+ *   `What does this mean?` accessible name.
  */
-export default function InfoTip({ text, children, className = '' }) {
+export default function InfoTip({ text, label, children, className = '' }) {
   const [open, setOpen] = useState(false)
   const id = useId()
   const wrapRef = useRef(null)
@@ -34,13 +36,18 @@ export default function InfoTip({ text, children, className = '' }) {
     <span ref={wrapRef} className={`relative inline-flex ${className}`}>
       <button
         type="button"
-        aria-label="What does this mean?"
+        aria-label={label ?? 'What does this mean?'}
         aria-expanded={open}
         aria-describedby={open ? id : undefined}
         onClick={() => setOpen((value) => !value)}
-        className="rounded-full p-0.5 text-muted hover:bg-surface-2 hover:text-text"
+        className={
+          label
+            ? 'inline-flex items-center gap-1 rounded-md px-1.5 py-1 text-xs font-medium text-accent hover:bg-surface-2'
+            : 'rounded-full p-0.5 text-muted hover:bg-surface-2 hover:text-text'
+        }
       >
-        <CircleHelp className="h-3.5 w-3.5" aria-hidden="true" />
+        <CircleHelp className="h-3.5 w-3.5 shrink-0" aria-hidden="true" />
+        {label ? <span>{label}</span> : null}
       </button>
       {open ? (
         <span

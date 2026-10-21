@@ -14,12 +14,39 @@ import {
   TRAFFIC_BUFFER_POINTS,
   TRAFFIC_BURST,
   TRAFFIC_HISTORY_MINUTES,
+  TRAFFIC_SEVERITY_KEYS,
+  TRAFFIC_SEVERITY_SPLIT,
   TRAFFIC_STREAM_INTERVAL_MS,
 } from '../constants/traffic.js'
 import { delay, randomInt, rngInt, seededRandom } from './helpers.js'
 import { getTenant } from './store.js'
 
 const STEP_MS = 1000
+
+/**
+ * Split `total` alerts across the four severity keys using `weights`
+ * (called after every other rng draw so existing points keep their numbers).
+ * @param {number} total Alerts in this second.
+ * @param {() => number} rng Seeded generator (already positioned).
+ * @param {number[]} weights One probability per key in TRAFFIC_SEVERITY_KEYS.
+ * @returns {{minor: number, moderate: number, serious: number, urgent: number}}
+ */
+function splitAlerts(total, rng, weights) {
+  const counts = { minor: 0, moderate: 0, serious: 0, urgent: 0 }
+  for (let index = 0; index < total; index += 1) {
+    let roll = rng()
+    let picked = TRAFFIC_SEVERITY_KEYS.at(-1)
+    for (let key = 0; key < TRAFFIC_SEVERITY_KEYS.length; key += 1) {
+      roll -= weights[key]
+      if (roll <= 0) {
+        picked = TRAFFIC_SEVERITY_KEYS[key]
+        break
+      }
+    }
+    counts[picked] += 1
+  }
+  return counts
+}
 
 /** @type {Array<object>} Ring buffer of points, oldest first. */
 let buffer = []
@@ -66,11 +93,17 @@ function makePoint(ts, tenant) {
     ? Math.max(0, blocked_or_flagged - rngInt(rng, 0, 2))
     : rngInt(rng, 0, 1)
   const sensor_lag = burst ? rngInt(rng, ...TRAFFIC_BURST.sensorLag) : rngInt(rng, ...TRAFFIC_BASELINE.sensorLag)
+  const alerts_by_severity = splitAlerts(
+    alerts_per_sec,
+    rng,
+    burst ? TRAFFIC_SEVERITY_SPLIT.burst : TRAFFIC_SEVERITY_SPLIT.quiet,
+  )
   return {
     ts: new Date(ts).toISOString(),
     flows_per_sec: flows,
     bytes_per_sec: bytes,
     alerts_per_sec,
+    alerts_by_severity,
     blocked_or_flagged,
     sensor_lag,
   }

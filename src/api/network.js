@@ -26,6 +26,17 @@ export async function getPorts(params) {
 }
 
 /**
+ * Share of this client's alerts by protocol (TCP, UDP, ...).
+ * @returns {Promise<{data: object[], meta: {total: number}}>}
+ * @throws {{status: number, message: string}} 401 without a session.
+ */
+export async function getProtocols() {
+  // const { data } = await http.get('/network/protocols');
+  // return data;
+  return dummy.getProtocols()
+}
+
+/**
  * Devices on the client's own network with first/last seen and alert counts.
  * @returns {Promise<{data: object[], meta: {total: number}}>}
  */

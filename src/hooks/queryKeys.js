@@ -12,6 +12,7 @@ export const queryKeys = {
   destinations: (params) => ['network', 'destinations', params ?? {}],
   ports: (params) => ['network', 'ports', params ?? {}],
   devices: () => ['network', 'devices'],
+  protocols: () => ['network', 'protocols'],
   trafficHistory: (params) => ['traffic', 'history', params ?? {}],
   sensor: () => ['sensor'],
   checklist: () => ['sensor', 'checklist'],

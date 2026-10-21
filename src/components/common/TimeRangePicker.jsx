@@ -15,12 +15,19 @@ function fromLocalInput(value) {
 }
 
 /**
- * Preset time-range picker (`15m`, `1h`, `24h`, `7d`) with optional custom
- * from/to inputs. The current selection is shown with `aria-pressed`.
+ * Preset time-range picker with optional custom from/to inputs. The current
+ * selection is shown with `aria-pressed`. `ranges` swaps the preset list
+ * (the alerts list uses its own 24h / 7d / 14d set).
  * @param {{value?: {key: string, from?: string|null, to?: string|null},
- *   onChange: (next: object) => void, className?: string}} props
+ *   onChange: (next: object) => void, ranges?: ReadonlyArray<object>,
+ *   className?: string}} props
  */
-export default function TimeRangePicker({ value = { key: '24h' }, onChange, className = '' }) {
+export default function TimeRangePicker({
+  value = { key: '24h' },
+  onChange,
+  ranges = TIME_RANGES,
+  className = '',
+}) {
   const select = (key) => {
     if (key === 'custom') onChange({ key, from: value.from ?? null, to: value.to ?? null })
     else onChange({ key })
@@ -29,7 +36,7 @@ export default function TimeRangePicker({ value = { key: '24h' }, onChange, clas
   return (
     <div className={`flex flex-wrap items-center gap-1.5 ${className}`}>
       <div className="inline-flex overflow-hidden rounded-md border border-border">
-        {TIME_RANGES.map((range) => (
+        {ranges.map((range) => (
           <button
             key={range.key}
             type="button"

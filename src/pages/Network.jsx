@@ -1,26 +1,39 @@
-import { Network as NetworkIcon } from 'lucide-react'
-
-import EmptyState from '../components/common/EmptyState.jsx'
+/**
+ * `/network` — everything this client's single sensor sees about its own
+ * network: internal devices, outside destinations, ports/protocols, live
+ * traffic over time and the alert heatmap. Each section owns its loading,
+ * empty and error state through `<WidgetCard>`.
+ */
+import AlertHeatmap from '../components/network/AlertHeatmap.jsx'
+import NetworkDestinations from '../components/network/NetworkDestinations.jsx'
+import NetworkDevices from '../components/network/NetworkDevices.jsx'
+import NetworkPorts from '../components/network/NetworkPorts.jsx'
+import NetworkTraffic from '../components/network/NetworkTraffic.jsx'
+import ProtocolShare from '../components/network/ProtocolShare.jsx'
 import { useDocumentTitle } from '../hooks/useDocumentTitle.js'
 
-/**
- * `/network` — network activity placeholder.
- */
 export default function Network() {
   useDocumentTitle('Network')
 
   return (
     <div className="space-y-6">
-      <div>
+      <header>
         <h1 className="text-xl font-semibold text-text">Network</h1>
         <p className="text-sm text-muted">How traffic has moved through your site.</p>
+      </header>
+
+      <NetworkDevices />
+
+      <div className="grid gap-6 xl:grid-cols-2">
+        <NetworkDestinations />
+        <div className="space-y-6">
+          <NetworkPorts />
+          <ProtocolShare />
+        </div>
       </div>
 
-      <EmptyState
-        icon={NetworkIcon}
-        title="Network views are not built yet"
-        description="This page will show the hosts on your site, the conversations between them and the traffic trends captured by your sensor."
-      />
+      <NetworkTraffic />
+      <AlertHeatmap />
     </div>
   )
 }

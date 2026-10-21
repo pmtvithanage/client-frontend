@@ -33,3 +33,15 @@ export const TRAFFIC_BURST = Object.freeze({
   liveEveryMs: [55000, 85000],
   liveDurationMs: 18000,
 })
+
+/**
+ * How `alerts_per_sec` splits across severities, as weights in the order of
+ * {@link TRAFFIC_SEVERITY_KEYS}. Quiet minutes skew Minor; bursts skew Urgent.
+ */
+export const TRAFFIC_SEVERITY_SPLIT = Object.freeze({
+  quiet: Object.freeze([0.5, 0.3, 0.15, 0.05]),
+  burst: Object.freeze([0.15, 0.35, 0.3, 0.2]),
+})
+
+/** Key order matching {@link TRAFFIC_SEVERITY_SPLIT} weights (Minor → Urgent). */
+export const TRAFFIC_SEVERITY_KEYS = Object.freeze(['minor', 'moderate', 'serious', 'urgent'])
