@@ -136,3 +136,15 @@ export const PORT_LIMIT = 8
 
 /** Service name used when a port has no friendly label. */
 export const UNKNOWN_SERVICE = 'Other'
+
+/** Height of the "Where your traffic goes" bar chart, in pixels. */
+export const DESTINATION_CHART_HEIGHT = 260
+
+/** Inner margin of the destinations bar chart (room for long labels). */
+export const DESTINATION_CHART_MARGIN = Object.freeze({ top: 0, right: 12, bottom: 0, left: 0 })
+
+/** Height of the protocol-share donut, in pixels. */
+export const PROTOCOL_CHART_HEIGHT = 200
+
+/** CSS variables used for the protocol-share slices, in order. */
+export const PROTOCOL_COLOR_VARS = Object.freeze(['--accent', '--sev-medium', '--muted', '--sev-low'])

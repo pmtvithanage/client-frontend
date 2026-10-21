@@ -6,7 +6,7 @@
  * @module components/network/AlertHeatmap
  */
 
-import { useMemo, useState } from 'react'
+import { useEffect, useMemo, useState } from 'react'
 
 import WidgetCard from '../dashboard/WidgetCard.jsx'
 import { useMe } from '../../hooks/useAuth.js'
@@ -43,6 +43,11 @@ export default function AlertHeatmap() {
     () => (query.data?.pages ?? []).flatMap((page) => page.data),
     [query.data],
   )
+
+  const { hasNextPage, isFetchingNextPage, fetchNextPage } = query
+  useEffect(() => {
+    if (hasNextPage && !isFetchingNextPage) fetchNextPage()
+  }, [hasNextPage, isFetchingNextPage, fetchNextPage])
 
   const { cells, max, total } = useMemo(() => {
     const formatter = new Intl.DateTimeFormat('en-US', {

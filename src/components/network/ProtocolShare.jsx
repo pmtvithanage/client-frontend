@@ -9,10 +9,12 @@ import { Cell, Pie, PieChart, ResponsiveContainer, Tooltip } from 'recharts'
 
 import WidgetCard from '../dashboard/WidgetCard.jsx'
 import { useProtocols } from '../../hooks/useNetwork.js'
-import { PROTOCOL_HINT, PROTOCOL_HINT_FALLBACK } from '../../constants/network.js'
-
-const CHART_HEIGHT = 200
-const SERIES_VARS = Object.freeze(['--accent', '--sev-medium', '--muted', '--sev-low'])
+import {
+  PROTOCOL_CHART_HEIGHT,
+  PROTOCOL_COLOR_VARS,
+  PROTOCOL_HINT,
+  PROTOCOL_HINT_FALLBACK,
+} from '../../constants/network.js'
 
 export default function ProtocolShare() {
   const protocols = useProtocols()
@@ -37,7 +39,7 @@ export default function ProtocolShare() {
       emptyDescription="Protocol shares appear here once your sensor flags traffic."
       skeletonRows={4}
     >
-      <div style={{ height: CHART_HEIGHT }}>
+      <div style={{ height: PROTOCOL_CHART_HEIGHT }}>
         <ResponsiveContainer width="100%" height="100%">
           <PieChart>
             <Pie
@@ -50,7 +52,7 @@ export default function ProtocolShare() {
               stroke="none"
             >
               {chartData.map((entry, index) => (
-                <Cell key={entry.name} fill={`var(${SERIES_VARS[index % SERIES_VARS.length]})`} />
+                <Cell key={entry.name} fill={`var(${PROTOCOL_COLOR_VARS[index % PROTOCOL_COLOR_VARS.length]})`} />
               ))}
             </Pie>
             <Tooltip
@@ -75,7 +77,7 @@ export default function ProtocolShare() {
           <li key={row.protocol} className="flex items-start gap-2">
             <span
               className="mt-1 h-2.5 w-2.5 shrink-0 rounded-full"
-              style={{ background: `var(${SERIES_VARS[index % SERIES_VARS.length]})` }}
+              style={{ background: `var(${PROTOCOL_COLOR_VARS[index % PROTOCOL_COLOR_VARS.length]})` }}
               aria-hidden="true"
             />
             <div>

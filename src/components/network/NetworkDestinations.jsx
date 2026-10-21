@@ -12,9 +12,7 @@ import { Bar, BarChart, CartesianGrid, ResponsiveContainer, Tooltip, XAxis, YAxi
 import WidgetCard from '../dashboard/WidgetCard.jsx'
 import { useDestinations } from '../../hooks/useNetwork.js'
 import { resolveCssVar } from '../../utils/dygraph.js'
-
-const CHART_HEIGHT = 260
-const CHART_MARGIN = Object.freeze({ top: 0, right: 12, bottom: 0, left: 0 })
+import { DESTINATION_CHART_HEIGHT, DESTINATION_CHART_MARGIN } from '../../constants/network.js'
 
 export default function NetworkDestinations() {
   const destinations = useDestinations()
@@ -44,8 +42,8 @@ export default function NetworkDestinations() {
       skeletonRows={5}
     >
       <div className="mb-4">
-        <ResponsiveContainer width="100%" height={CHART_HEIGHT}>
-          <BarChart data={chartData} layout="vertical" margin={CHART_MARGIN} barCategoryGap="24%">
+        <ResponsiveContainer width="100%" height={DESTINATION_CHART_HEIGHT}>
+          <BarChart data={chartData} layout="vertical" margin={DESTINATION_CHART_MARGIN} barCategoryGap="24%">
             <CartesianGrid horizontal={false} stroke={muted} strokeDasharray="3 3" />
             <XAxis
               type="number"
@@ -72,7 +70,6 @@ export default function NetworkDestinations() {
                 color: text,
               }}
               formatter={(value) => [`${value} alerts`, 'Alerts']}
-              labelFormatter={(label) => `${label}`}
             />
             <Bar dataKey="alerts" fill={accent} radius={[0, 4, 4, 0]} />
           </BarChart>
