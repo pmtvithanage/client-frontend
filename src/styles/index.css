@@ -122,3 +122,43 @@ body {
   background: var(--border);
   border-radius: 9999px;
 }
+
+/* ---------- Print / Save as PDF ----------
+   Reports print on white with dark text and darker risk colours. Navigation,
+   action buttons and pickers are hidden with Tailwind's `print:hidden`; CSS
+   variables are re-defined here so charts drawn with `var(--…)` and cards
+   switch together. */
+@media print {
+  :root,
+  :root.light {
+    --bg: #ffffff;
+    --surface: #ffffff;
+    --surface-2: #f3f4f6;
+    --border: #cbd5e1;
+    --text: #111827;
+    --muted: #4b5563;
+    --accent: #1d4ed8;
+    --accent-fg: #ffffff;
+    --sev-low: #15803d;
+    --sev-medium: #b45309;
+    --sev-high: #c2410c;
+    --sev-critical: #b91c1c;
+  }
+
+  body {
+    background: #ffffff;
+    color: #111827;
+  }
+
+  main {
+    padding: 0 !important;
+  }
+
+  section {
+    break-inside: avoid;
+  }
+
+  a[href]::after {
+    content: '';
+  }
+}

@@ -8,6 +8,9 @@ const MINUTE = 60_000
 const HOUR = 60 * MINUTE
 const DAY = 24 * HOUR
 
+/** One day in milliseconds, for date arithmetic in pages. */
+export const DAY_MS = DAY
+
 /** @type {ReadonlyArray<{key: string, label: string, ms: number|null}>} */
 export const TIME_RANGES = Object.freeze([
   { key: '15m', label: '15m', ms: 15 * MINUTE },

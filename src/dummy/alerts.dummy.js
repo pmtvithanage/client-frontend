@@ -129,6 +129,9 @@ export async function updateAlert(id, patch = {}) {
   }
   alert.status = status
   alert.updated_at = new Date().toISOString()
+  if (status !== ALERT_STATUS.NEW && !alert.acknowledged_at) {
+    alert.acknowledged_at = alert.updated_at
+  }
   if (status === ALERT_STATUS.EXPECTED && patch.reason) {
     alert.expected_feedback = {
       author: currentUser().email,

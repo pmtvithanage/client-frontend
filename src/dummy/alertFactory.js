@@ -54,6 +54,18 @@ function geoFor(ip) {
   return DESTINATION_GEO[String(ip).split('.').slice(0, 3).join('.')] ?? null
 }
 
+/**
+ * Acknowledgement time for a seeded alert, derived from the alert's own fields
+ * (no extra RNG draw, so the rest of the seeded data is unchanged). Alerts the
+ * client never touched stay `new` and have no acknowledgement time.
+ */
+function acknowledgedAt(ts, seq, dstPort, status, now) {
+  if (status === ALERT_STATUS.NEW) return null
+  const minutes = 4 + ((seq * 7 + dstPort) % 72)
+  const ackMs = Math.min(Date.parse(ts) + minutes * 60_000, now - 30_000)
+  return new Date(ackMs).toISOString()
+}
+
 /** Traffic facts for one alert: how long the flow lasted and how much moved. */
 function trafficFacts(rng) {
   const duration_ms = rngInt(rng, 1, 600) * 1000
@@ -125,6 +137,7 @@ function buildAlert(rng, context) {
     client_id: seed.id,
     ts,
     updated_at: ts,
+    acknowledged_at: acknowledgedAt(ts, seq, dst_port, finalStatus, now),
     severity_tier: severity,
     status: finalStatus,
     src_ip,
@@ -152,6 +165,7 @@ function buildSampleAlert(seed, seq, now) {
     client_id: seed.id,
     ts,
     updated_at: ts,
+    acknowledged_at: null,
     severity_tier: sample.severity_tier,
     status: sample.status,
     src_ip: sample.src_ip,

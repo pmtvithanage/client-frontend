@@ -15,7 +15,7 @@ export default function Sidebar() {
   return (
     <nav
       aria-label="Main"
-      className="sticky top-14 hidden h-[calc(100vh-3.5rem)] w-56 shrink-0 flex-col gap-1 overflow-y-auto border-r border-border bg-surface p-3 lg:flex"
+      className="sticky top-14 hidden h-[calc(100vh-3.5rem)] w-56 shrink-0 flex-col gap-1 overflow-y-auto border-r border-border bg-surface p-3 lg:flex print:hidden"
     >
       {items.map((item) => {
         const Icon = item.icon

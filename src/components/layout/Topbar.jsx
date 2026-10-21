@@ -14,7 +14,7 @@ export default function Topbar() {
   const { isDark, toggleTheme } = useTheme()
 
   return (
-    <header className="sticky top-0 z-30 flex h-14 items-center justify-between gap-3 border-b border-border bg-surface px-3 sm:px-4">
+    <header className="sticky top-0 z-30 flex h-14 items-center justify-between gap-3 border-b border-border bg-surface px-3 sm:px-4 print:hidden">
       <div className="flex min-w-0 items-center gap-2.5">
         <span
           aria-hidden="true"

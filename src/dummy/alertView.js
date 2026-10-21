@@ -19,6 +19,7 @@ export function toClientAlert(alert, { detail = false } = {}) {
     id: alert.id,
     ts: alert.ts,
     updated_at: alert.updated_at,
+    acknowledged_at: alert.acknowledged_at ?? null,
     severity_tier: alert.severity_tier,
     status: alert.status,
     src_ip: alert.src_ip,
