@@ -27,11 +27,11 @@ export function useChecklist() {
   })
 }
 
-/** Mutation: re-pair the sensor (owner only). */
+/** Mutation: pair a new sensor, replacing the current one (owner only). */
 export function usePairSensor() {
   const queryClient = useQueryClient()
   return useMutation({
-    mutationFn: pairSensor,
+    mutationFn: (code) => pairSensor(code),
     onSuccess: () => queryClient.invalidateQueries({ queryKey: ['sensor'] }),
   })
 }

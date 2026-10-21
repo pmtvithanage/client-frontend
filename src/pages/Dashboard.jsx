@@ -7,6 +7,7 @@ import GreetingHeader from '../components/dashboard/GreetingHeader.jsx'
 import KpiRow from '../components/dashboard/KpiRow.jsx'
 import SecurityStatusCard from '../components/dashboard/SecurityStatusCard.jsx'
 import TopInsights from '../components/dashboard/TopInsights.jsx'
+import OfflineSensorBanner from '../components/common/OfflineSensorBanner.jsx'
 import TrafficSection from '../components/dashboard/TrafficSection.jsx'
 import { useDocumentTitle } from '../hooks/useDocumentTitle.js'
 import { useOverview } from '../hooks/useOverview.js'
@@ -34,6 +35,7 @@ export default function Dashboard() {
   return (
     <div className="space-y-6">
       <GreetingHeader refreshedAt={overview.dataUpdatedAt} refreshing={overview.isFetching} onRefresh={refresh} />
+      <OfflineSensorBanner />
       <SecurityStatusCard />
       <KpiRow anchor={anchor} />
       <AttentionList />

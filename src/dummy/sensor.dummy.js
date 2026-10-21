@@ -4,7 +4,8 @@
  * @module dummy/sensor.dummy
  */
 
-import { currentUser, delay, requireOwner } from './helpers.js'
+import { PAIR_CODE_LENGTH } from '../constants/sensor.js'
+import { currentUser, delay, makeId, requireOwner } from './helpers.js'
 import { getTenant } from './store.js'
 
 /** Sensor fields the client is allowed to see (the full documented shape). */
@@ -25,9 +26,9 @@ function sensorView(sensor) {
   }
 }
 
-/** One checklist row. */
-function check(id, label, status, detail) {
-  return { id, label, status, detail }
+/** One checklist row: pass/warn/fail, a plain detail and a fix tip. */
+function check(id, label, status, detail, fix) {
+  return { id, label, status, detail, fix }
 }
 
 /**
@@ -44,6 +45,7 @@ export async function getSensor() {
 
 /**
  * Plain-language connection checklist derived from the sensor's live numbers.
+ * Every row carries a short fix tip shown only when the step is not passing.
  * @returns {Promise<{data: object[], meta: {overall: string}}>}
  */
 export async function getChecklist() {
@@ -54,33 +56,37 @@ export async function getChecklist() {
   const rows = [
     check(
       'power',
-      'Sensor is powered on and reporting in',
+      'Sensor is powered and reachable',
       online ? 'ok' : 'fail',
-      online ? `Last report ${sensor.last_seen}` : `No report since ${sensor.last_seen}`,
+      online ? 'The sensor answers our requests' : 'The sensor is not answering',
+      'Check that the sensor is plugged in and its network cable or Wi-Fi is connected, then wait a minute.',
     ),
     check(
-      'streaming',
-      'Traffic is reaching your dashboard',
+      'traffic',
+      'Your traffic is reaching the sensor',
       online && sensor.events_per_min > 0 ? 'ok' : 'fail',
-      online ? `${sensor.events_per_min} events per minute` : 'Waiting for events',
+      online ? `${sensor.events_per_min} events per minute` : 'No events are arriving',
+      'Check that the sensor is connected to a port on your main network switch.',
     ),
     check(
-      'lag',
-      'Nothing is queueing up behind schedule',
+      'platform',
+      'Data is reaching the platform',
+      !online ? 'fail' : sensor.ingest_errors === 0 ? 'ok' : 'warning',
+      !online
+        ? 'Nothing has arrived yet'
+        : sensor.ingest_errors === 0
+          ? 'No read errors today'
+          : `${sensor.ingest_errors} read errors today`,
+      'Restart the sensor. If errors continue, ask for help and mention your sensor id.',
+    ),
+    check(
+      'delays',
+      'Alerts arrive without delays',
       sensor.kafka_lag <= 20 ? 'ok' : 'warning',
-      sensor.kafka_lag <= 20 ? `${sensor.kafka_lag} items waiting` : `${sensor.kafka_lag} items waiting — this may delay alerts`,
-    ),
-    check(
-      'errors',
-      'Events are being read without errors',
-      sensor.ingest_errors === 0 ? 'ok' : 'warning',
-      sensor.ingest_errors === 0 ? 'No read errors' : `${sensor.ingest_errors} read errors today`,
-    ),
-    check(
-      'health',
-      'Sensor reports a healthy connection',
-      healthy ? 'ok' : online ? 'warning' : 'fail',
-      healthy ? 'All checks passed' : `Sensor state: ${sensor.health}`,
+      sensor.kafka_lag <= 20
+        ? `${sensor.kafka_lag} items waiting`
+        : `${sensor.kafka_lag} items waiting — alerts may be late`,
+      'Wait a few minutes. If delays persist, check your internet upload speed.',
     ),
   ]
   return {
@@ -90,16 +96,24 @@ export async function getChecklist() {
 }
 
 /**
- * Simulate re-pairing the sensor (owner only).
- * @returns {Promise<object>} The updated sensor.
- * @throws {{status: number, message: string}} 403 member, 409 already paired.
+ * Pair a new sensor (owner only). A client has exactly ONE sensor, so pairing
+ * REPLACES the current one: it gets a fresh id, version stamp and counters,
+ * while the client's alert history is kept.
+ * @param {{code?: string}} [input] Pairing code printed with the new sensor.
+ * @returns {Promise<object>} The new sensor.
+ * @throws {{status: number, message: string}} 400 bad code, 403 member.
  */
-export async function pairSensor() {
+export async function pairSensor(input = {}) {
   await delay(400, 900)
   requireOwner()
+  const code = String(input.code ?? '').trim().toUpperCase()
+  if (code.length !== PAIR_CODE_LENGTH) {
+    throw { status: 400, message: `Pairing codes are ${PAIR_CODE_LENGTH} characters` }
+  }
   const sensor = getTenant().sensor
-  if (sensor.status === 'online') throw { status: 409, message: 'Your sensor is already paired' }
   Object.assign(sensor, {
+    id: makeId('sensor'),
+    version: 'Suricata 7.0.7 · CICFlowMeter 1.2',
     status: 'online',
     health: 'healthy',
     last_seen: new Date().toISOString(),

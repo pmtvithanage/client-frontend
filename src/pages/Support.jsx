@@ -1,5 +1,5 @@
 import { LifeBuoy } from 'lucide-react'
-import { Navigate } from 'react-router-dom'
+import { Navigate, useLocation } from 'react-router-dom'
 
 import EmptyState from '../components/common/EmptyState.jsx'
 import { ROLES } from '../constants/nav.js'
@@ -13,6 +13,7 @@ import { readSession } from '../utils/session.js'
 export default function Support() {
   useDocumentTitle('Support & feedback')
   const role = readSession()?.user?.role
+  const prefillSubject = useLocation().state?.subject
 
   if (role !== ROLES.OWNER) {
     return <Navigate to="/" replace />
@@ -24,6 +25,12 @@ export default function Support() {
         <h1 className="text-xl font-semibold text-text">Support &amp; feedback</h1>
         <p className="text-sm text-muted">Tell us what is working and what is not.</p>
       </div>
+
+      {prefillSubject ? (
+        <p className="rounded-lg border border-border bg-surface p-3 text-sm text-muted">
+          Request subject ready: <span className="font-medium text-text">{prefillSubject}</span>
+        </p>
+      ) : null}
 
       <EmptyState
         icon={LifeBuoy}

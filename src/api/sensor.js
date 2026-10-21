@@ -24,14 +24,16 @@ export async function getChecklist() {
 }
 
 /**
- * Simulate re-pairing the sensor (owner only).
- * @returns {Promise<object>} The updated sensor.
- * @throws {{status: number, message: string}} 403 member, 409 already paired.
+ * Pair a new sensor (owner only). A client has exactly ONE sensor, so this
+ * REPLACES the current one and keeps the alert history.
+ * @param {string} code Pairing code printed with the new sensor (8 characters).
+ * @returns {Promise<object>} The new sensor.
+ * @throws {{status: number, message: string}} 400 bad code, 403 member.
  */
-export async function pairSensor() {
-  // const { data } = await http.post('/sensor/pair');
+export async function pairSensor(code) {
+  // const { data } = await http.post('/sensor/pair', { code });
   // return data;
-  return dummy.pairSensor()
+  return dummy.pairSensor({ code })
 }
 
 /**

@@ -9,6 +9,9 @@ export const TRAFFIC_HISTORY_MINUTES = 15
 /** Distance between history points, in seconds. */
 export const TRAFFIC_STEP_SECONDS = 1
 
+/** Seconds in one minute (used to turn per-second rates into per-minute rates). */
+export const SECONDS_PER_MINUTE = 60
+
 /** Ring buffer size (15 minutes of one-second points). */
 export const TRAFFIC_BUFFER_POINTS = (TRAFFIC_HISTORY_MINUTES * 60) / TRAFFIC_STEP_SECONDS
 
