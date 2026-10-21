@@ -11,3 +11,6 @@ export const AUTH_USER_KEY = 'nids_client_user'
 
 /** Key used to persist the theme choice. */
 export const THEME_STORAGE_KEY = 'nids_client_theme'
+
+/** Key used to persist account preferences (timezone). */
+export const ACCOUNT_PREFS_KEY = 'nids_client_account_prefs'

@@ -1,22 +1,15 @@
-import { Bell } from 'lucide-react'
-import { Navigate } from 'react-router-dom'
-
-import EmptyState from '../components/common/EmptyState.jsx'
-import { ROLES } from '../constants/nav.js'
+import NotificationPreferences from '../components/notifications/NotificationPreferences.jsx'
+import { useAuth } from '../hooks/useAuth.js'
 import { useDocumentTitle } from '../hooks/useDocumentTitle.js'
-import { readSession } from '../utils/session.js'
+import { useNotificationPreferences } from '../hooks/useNotifications.js'
 
 /**
- * `/notifications` — notification settings placeholder. Owner-only: members are
- * sent back to the dashboard because this control is not theirs to use.
+ * `/notifications` — notification settings (owner can edit, members read-only).
  */
 export default function Notifications() {
   useDocumentTitle('Notifications')
-  const role = readSession()?.user?.role
-
-  if (role !== ROLES.OWNER) {
-    return <Navigate to="/" replace />
-  }
+  const { isOwner } = useAuth()
+  const prefs = useNotificationPreferences()
 
   return (
     <div className="space-y-6">
@@ -25,11 +18,14 @@ export default function Notifications() {
         <p className="text-sm text-muted">Choose how your team hears about new alerts.</p>
       </div>
 
-      <EmptyState
-        icon={Bell}
-        title="Notification settings are not built yet"
-        description="This page will let an owner decide who is emailed about new alerts and how often."
-      />
+      {prefs.isLoading ? <p className="text-sm text-muted">Loading preferences…</p> : null}
+      {prefs.data ? (
+        <NotificationPreferences
+          prefs={prefs.data}
+          onSaved={() => {}}
+          disabled={!isOwner}
+        />
+      ) : null}
     </div>
   )
 }
